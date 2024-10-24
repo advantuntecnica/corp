@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Tareas</title>
+    <title>Gestión de Tareas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -76,27 +76,47 @@
             background-color: #218838;
         }
 
-        .notification {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: 4px;
+        .tasks-list {
+            margin-top: 30px;
         }
 
-        #form-resultados {
+        .task {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .task h3 {
+            margin-top: 0;
+        }
+
+        .task-results {
             display: none;
+        }
+
+        .task.completed .task-results {
+            display: block;
+        }
+
+        .task.completed .task-inputs {
+            display: none;
+        }
+
+        .task.completed {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Formulario de Tareas</h1>
+        <h1>Gestión de Tareas</h1>
 
-        <!-- Primera Parte del Formulario -->
+        <!-- Formulario para cargar tareas -->
         <div id="form-tarea">
+            <h2>Cargar Tarea</h2>
             <!-- Desplegable ADM/OF -->
             <div class="form-group">
                 <label for="adm-of">Seleccionar Tipo:</label>
@@ -125,104 +145,130 @@
             </div>
 
             <!-- Botón para completar tarea -->
-            <button class="btn" onclick="enviarFormulario()">Enviar Tarea</button>
+            <button class="btn" onclick="enviarTarea()">Enviar Tarea</button>
         </div>
 
-        <!-- Formulario de Resultados (Segunda Parte) -->
-        <div id="form-resultados">
-            <h2>Tarea Asignada</h2>
-            <div class="form-group">
-                <label>Tipo:</label>
-                <p id="mostrar-adm-of"></p>
-            </div>
+        <!-- Lista de tareas -->
+        <div class="tasks-list">
+            <h2>Tareas Pendientes</h2>
+            <div id="tareas-pendientes"></div>
 
-            <div class="row">
-                <div class="form-group">
-                    <label>Ticket:</label>
-                    <p id="mostrar-ticket"></p>
-                </div>
-                <div class="form-group">
-                    <label>Nombre:</label>
-                    <p id="mostrar-nombre"></p>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Tarea:</label>
-                <p id="mostrar-tarea"></p>
-            </div>
-
-            <!-- Resultados -->
-            <div class="form-group">
-                <label for="resultados">Resultados:</label>
-                <textarea id="resultados" placeholder="Complete los resultados"></textarea>
-            </div>
-
-            <button class="btn" onclick="enviarResultados()">Enviar Resultados</button>
-
-            <!-- Notificación -->
-            <div id="notificacion" class="notification" style="display: none;">
-                <p>¡Resultados enviados!</p>
-            </div>
+            <h2>Tareas Finalizadas</h2>
+            <div id="tareas-finalizadas"></div>
         </div>
-
     </div>
 
     <script>
-        // Variable para almacenar la tarea enviada
-        let tareaGuardada = {};
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarTareas();
+        });
 
-        function enviarFormulario() {
-            // Obtener los valores ingresados
+        // Enviar una nueva tarea
+        function enviarTarea() {
             const tipo = document.getElementById('adm-of').value;
             const ticket = document.getElementById('ticket').value;
             const nombre = document.getElementById('nombre').value;
             const tarea = document.getElementById('tarea').value;
 
-            // Validar que los campos no estén vacíos
-            if (ticket === '' || nombre === '' || tarea === '') {
-                alert('Por favor complete todos los campos obligatorios.');
+            if (!ticket || !nombre || !tarea) {
+                alert('Por favor complete todos los campos.');
                 return;
             }
 
-            // Guardar la tarea
-            tareaGuardada = {
+            const nuevaTarea = {
+                id: Date.now(),
                 tipo,
                 ticket,
                 nombre,
-                tarea
+                tarea,
+                resultados: '',
+                completada: false
             };
 
-            // Mostrar la tarea cargada en la segunda parte del formulario
-            document.getElementById('mostrar-adm-of').innerText = tareaGuardada.tipo;
-            document.getElementById('mostrar-ticket').innerText = tareaGuardada.ticket;
-            document.getElementById('mostrar-nombre').innerText = tareaGuardada.nombre;
-            document.getElementById('mostrar-tarea').innerText = tareaGuardada.tarea;
+            let tareas = obtenerTareas();
+            tareas.push(nuevaTarea);
+            guardarTareas(tareas);
 
-            // Ocultar la primera parte del formulario y mostrar la segunda parte
-            document.getElementById('form-tarea').style.display = 'none';
-            document.getElementById('form-resultados').style.display = 'block';
+            limpiarFormulario();
+            cargarTareas();
         }
 
-        function enviarResultados() {
-            const resultados = document.getElementById('resultados').value;
+        // Cargar tareas en pantalla
+        function cargarTareas() {
+            const tareas = obtenerTareas();
+            const tareasPendientes = tareas.filter(tarea => !tarea.completada);
+            const tareasFinalizadas = tareas.filter(tarea => tarea.completada);
 
-            if (resultados === '') {
+            mostrarTareas(tareasPendientes, 'tareas-pendientes');
+            mostrarTareas(tareasFinalizadas, 'tareas-finalizadas');
+        }
+
+        // Mostrar las tareas en la sección correspondiente
+        function mostrarTareas(tareas, contenedorId) {
+            const contenedor = document.getElementById(contenedorId);
+            contenedor.innerHTML = '';  // Limpiar el contenedor
+
+            tareas.forEach(tarea => {
+                const divTarea = document.createElement('div');
+                divTarea.classList.add('task');
+                if (tarea.completada) divTarea.classList.add('completed');
+
+                divTarea.innerHTML = `
+                    <h3>${tarea.tipo} - Ticket #${tarea.ticket}</h3>
+                    <p><strong>Nombre:</strong> ${tarea.nombre}</p>
+                    <p><strong>Tarea:</strong> ${tarea.tarea}</p>
+
+                    <div class="task-inputs">
+                        <textarea id="resultados-${tarea.id}" placeholder="Ingrese los resultados"></textarea>
+                        <button class="btn" onclick="completarTarea(${tarea.id})">Enviar Resultados</button>
+                    </div>
+
+                    <div class="task-results">
+                        <p><strong>Resultados:</strong> ${tarea.resultados}</p>
+                    </div>
+                `;
+
+                contenedor.appendChild(divTarea);
+            });
+        }
+
+        // Completar una tarea y agregar resultados
+        function completarTarea(tareaId) {
+            const resultado = document.getElementById(`resultados-${tareaId}`).value;
+            if (!resultado) {
                 alert('Por favor complete los resultados.');
                 return;
             }
 
-            // Mostrar la notificación
-            const notificacion = document.getElementById('notificacion');
-            notificacion.style.display = 'block';
+            let tareas = obtenerTareas();
+            tareas = tareas.map(tarea => {
+                if (tarea.id === tareaId) {
+                    tarea.resultados = resultado;
+                    tarea.completada = true;
+                }
+                return tarea;
+            });
 
-            // Simular el envío de resultados (lógica adicional aquí si tienes backend)
-            setTimeout(() => {
-                alert(`Resultados enviados para la tarea de ${tareaGuardada.nombre}.`);
-            }, 1000);
+            guardarTareas(tareas);
+            cargarTareas();
+        }
 
-            // Limpiar el campo de resultados
-            document.getElementById('resultados').value = '';
+        // Obtener tareas almacenadas
+        function obtenerTareas() {
+            return JSON.parse(localStorage.getItem('tareas')) || [];
+        }
+
+        // Guardar tareas en localStorage
+        function guardarTareas(tareas) {
+            localStorage.setItem('tareas', JSON.stringify(tareas));
+        }
+
+        // Limpiar el formulario después de enviar
+        function limpiarFormulario() {
+            document.getElementById('adm-of').value = 'ADM';
+            document.getElementById('ticket').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('tarea').value = '';
         }
     </script>
 
