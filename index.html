@@ -3,100 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servicios</title>
+    <title>Formulario de Tareas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            margin: 0;
             padding: 20px;
+            background-color: #f0f0f0;
         }
-        .service-section {
-            background-color: white;
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        h2 {
-            color: #333;
+
+        h1 {
+            text-align: center;
         }
-        label {
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
             font-weight: bold;
         }
-        select {
-            margin-top: 10px;
-            padding: 5px;
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .row .form-group {
+            width: 48%;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .notification {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Selecciona el Tipo de Servicio</h1>
-    </header>
+    <div class="container">
+        <h1>Formulario de Tareas</h1>
 
-    <main>
-        <!-- Primera sección -->
-        <section class="service-section">
-            <h2>Tipo de Servicio 1</h2>
-            <label for="servicio1">Elige una opción:</label>
-            <select id="servicio1">
-                <option value="opcion1">Opción 1</option>
-                <option value="opcion2">Opción 2</option>
-                <option value="opcion3">Opción 3</option>
-                <option value="opcion4">Opción 4</option>
-                <option value="opcion5">Opción 5</option>
-                <option value="opcion6">Opción 6</option>
+        <!-- Desplegable ADM/OF -->
+        <div class="form-group">
+            <label for="adm-of">Seleccionar Tipo:</label>
+            <select id="adm-of">
+                <option value="ADM">ADM</option>
+                <option value="OF 212">OF 212</option>
             </select>
-        </section>
+        </div>
 
-        <!-- Segunda sección -->
-        <section class="service-section">
-            <h2>Tipo de Servicio 2</h2>
-            <label for="servicio2">Elige una opción:</label>
-            <select id="servicio2">
-                <option value="opcion1">Opción 1</option>
-                <option value="opcion2">Opción 2</option>
-                <option value="opcion3">Opción 3</option>
-                <option value="opcion4">Opción 4</option>
-                <option value="opcion5">Opción 5</option>
-                <option value="opcion6">Opción 6</option>
-            </select>
-        </section>
+        <!-- Ticket y Nombre -->
+        <div class="row">
+            <div class="form-group">
+                <label for="ticket">Ticket:</label>
+                <input type="number" id="ticket" placeholder="Ingrese el número de ticket">
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" placeholder="Ingrese su nombre">
+            </div>
+        </div>
 
-        <!-- Tercera sección -->
-        <section class="service-section">
-            <h2>Tipo de Servicio 3</h2>
-            <label for="servicio3">Elige una opción:</label>
-            <select id="servicio3">
-                <option value="opcion1">Opción 1</option>
-                <option value="opcion2">Opción 2</option>
-                <option value="opcion3">Opción 3</option>
-                <option value="opcion4">Opción 4</option>
-                <option value="opcion5">Opción 5</option>
-                <option value="opcion6">Opción 6</option>
-            </select>
-        </section>
+        <!-- Tarea -->
+        <div class="form-group">
+            <label for="tarea">Tarea:</label>
+            <textarea id="tarea" placeholder="Describa la tarea a realizar"></textarea>
+        </div>
 
-        <!-- Cuarta sección -->
-        <section class="service-section">
-            <h2>Tipo de Servicio 4</h2>
-            <label for="servicio4">Elige una opción:</label>
-            <select id="servicio4">
-                <option value="opcion1">Opción 1</option>
-                <option value="opcion2">Opción 2</option>
-                <option value="opcion3">Opción 3</option>
-                <option value="opcion4">Opción 4</option>
-                <option value="opcion5">Opción 5</option>
-                <option value="opcion6">Opción 6</option>
-            </select>
-        </section>
-    </main>
+        <!-- Resultados -->
+        <div class="form-group">
+            <label for="resultados">Resultados:</label>
+            <textarea id="resultados" placeholder="Complete los resultados"></textarea>
+        </div>
 
-    <footer>
-        <p>&copy; 2024 Tu Nombre. Todos los derechos reservados.</p>
-    </footer>
+        <!-- Botón para completar tarea -->
+        <button class="btn" onclick="enviarFormulario()">Enviar Tarea</button>
+
+        <!-- Notificación -->
+        <div id="notificacion" class="notification" style="display: none;">
+            <p>¡Tarea enviada! Notificación enviada a la otra persona.</p>
+        </div>
+    </div>
+
+    <script>
+        function enviarFormulario() {
+            // Obtener los valores ingresados
+            const tipo = document.getElementById('adm-of').value;
+            const ticket = document.getElementById('ticket').value;
+            const nombre = document.getElementById('nombre').value;
+            const tarea = document.getElementById('tarea').value;
+            const resultados = document.getElementById('resultados').value;
+
+            // Validar que los campos no estén vacíos
+            if (ticket === '' || nombre === '' || tarea === '') {
+                alert('Por favor complete todos los campos obligatorios.');
+                return;
+            }
+
+            // Simular una notificación
+            const notificacion = document.getElementById('notificacion');
+            notificacion.style.display = 'block';
+
+            // Simular el envío de la notificación a otra persona (esto se podría implementar con backend en un futuro)
+            setTimeout(() => {
+                alert(`Notificación enviada a la otra persona sobre la tarea de ${nombre}.`);
+            }, 1000);
+
+            // Limpiar el formulario
+            document.getElementById('adm-of').value = 'ADM';
+            document.getElementById('ticket').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('tarea').value = '';
+            document.getElementById('resultados').value = '';
+        }
+    </script>
 
 </body>
 </html>
