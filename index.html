@@ -84,6 +84,10 @@
             border: 1px solid #c3e6cb;
             border-radius: 4px;
         }
+
+        #form-resultados {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -91,56 +95,89 @@
     <div class="container">
         <h1>Formulario de Tareas</h1>
 
-        <!-- Desplegable ADM/OF -->
-        <div class="form-group">
-            <label for="adm-of">Seleccionar Tipo:</label>
-            <select id="adm-of">
-                <option value="ADM">ADM</option>
-                <option value="OF 212">OF 212</option>
-            </select>
-        </div>
-
-        <!-- Ticket y Nombre -->
-        <div class="row">
+        <!-- Primera Parte del Formulario -->
+        <div id="form-tarea">
+            <!-- Desplegable ADM/OF -->
             <div class="form-group">
-                <label for="ticket">Ticket:</label>
-                <input type="number" id="ticket" placeholder="Ingrese el número de ticket">
+                <label for="adm-of">Seleccionar Tipo:</label>
+                <select id="adm-of">
+                    <option value="ADM">ADM</option>
+                    <option value="OF 212">OF 212</option>
+                </select>
             </div>
+
+            <!-- Ticket y Nombre -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="ticket">Ticket:</label>
+                    <input type="number" id="ticket" placeholder="Ingrese el número de ticket">
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" placeholder="Ingrese su nombre">
+                </div>
+            </div>
+
+            <!-- Tarea -->
             <div class="form-group">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" placeholder="Ingrese su nombre">
+                <label for="tarea">Tarea:</label>
+                <textarea id="tarea" placeholder="Describa la tarea a realizar"></textarea>
+            </div>
+
+            <!-- Botón para completar tarea -->
+            <button class="btn" onclick="enviarFormulario()">Enviar Tarea</button>
+        </div>
+
+        <!-- Formulario de Resultados (Segunda Parte) -->
+        <div id="form-resultados">
+            <h2>Tarea Asignada</h2>
+            <div class="form-group">
+                <label>Tipo:</label>
+                <p id="mostrar-adm-of"></p>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Ticket:</label>
+                    <p id="mostrar-ticket"></p>
+                </div>
+                <div class="form-group">
+                    <label>Nombre:</label>
+                    <p id="mostrar-nombre"></p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Tarea:</label>
+                <p id="mostrar-tarea"></p>
+            </div>
+
+            <!-- Resultados -->
+            <div class="form-group">
+                <label for="resultados">Resultados:</label>
+                <textarea id="resultados" placeholder="Complete los resultados"></textarea>
+            </div>
+
+            <button class="btn" onclick="enviarResultados()">Enviar Resultados</button>
+
+            <!-- Notificación -->
+            <div id="notificacion" class="notification" style="display: none;">
+                <p>¡Resultados enviados!</p>
             </div>
         </div>
 
-        <!-- Tarea -->
-        <div class="form-group">
-            <label for="tarea">Tarea:</label>
-            <textarea id="tarea" placeholder="Describa la tarea a realizar"></textarea>
-        </div>
-
-        <!-- Resultados -->
-        <div class="form-group">
-            <label for="resultados">Resultados:</label>
-            <textarea id="resultados" placeholder="Complete los resultados"></textarea>
-        </div>
-
-        <!-- Botón para completar tarea -->
-        <button class="btn" onclick="enviarFormulario()">Enviar Tarea</button>
-
-        <!-- Notificación -->
-        <div id="notificacion" class="notification" style="display: none;">
-            <p>¡Tarea enviada! Notificación enviada a la otra persona.</p>
-        </div>
     </div>
 
     <script>
+        // Variable para almacenar la tarea enviada
+        let tareaGuardada = {};
+
         function enviarFormulario() {
             // Obtener los valores ingresados
             const tipo = document.getElementById('adm-of').value;
             const ticket = document.getElementById('ticket').value;
             const nombre = document.getElementById('nombre').value;
             const tarea = document.getElementById('tarea').value;
-            const resultados = document.getElementById('resultados').value;
 
             // Validar que los campos no estén vacíos
             if (ticket === '' || nombre === '' || tarea === '') {
@@ -148,20 +185,43 @@
                 return;
             }
 
-            // Simular una notificación
+            // Guardar la tarea
+            tareaGuardada = {
+                tipo,
+                ticket,
+                nombre,
+                tarea
+            };
+
+            // Mostrar la tarea cargada en la segunda parte del formulario
+            document.getElementById('mostrar-adm-of').innerText = tareaGuardada.tipo;
+            document.getElementById('mostrar-ticket').innerText = tareaGuardada.ticket;
+            document.getElementById('mostrar-nombre').innerText = tareaGuardada.nombre;
+            document.getElementById('mostrar-tarea').innerText = tareaGuardada.tarea;
+
+            // Ocultar la primera parte del formulario y mostrar la segunda parte
+            document.getElementById('form-tarea').style.display = 'none';
+            document.getElementById('form-resultados').style.display = 'block';
+        }
+
+        function enviarResultados() {
+            const resultados = document.getElementById('resultados').value;
+
+            if (resultados === '') {
+                alert('Por favor complete los resultados.');
+                return;
+            }
+
+            // Mostrar la notificación
             const notificacion = document.getElementById('notificacion');
             notificacion.style.display = 'block';
 
-            // Simular el envío de la notificación a otra persona (esto se podría implementar con backend en un futuro)
+            // Simular el envío de resultados (lógica adicional aquí si tienes backend)
             setTimeout(() => {
-                alert(`Notificación enviada a la otra persona sobre la tarea de ${nombre}.`);
+                alert(`Resultados enviados para la tarea de ${tareaGuardada.nombre}.`);
             }, 1000);
 
-            // Limpiar el formulario
-            document.getElementById('adm-of').value = 'ADM';
-            document.getElementById('ticket').value = '';
-            document.getElementById('nombre').value = '';
-            document.getElementById('tarea').value = '';
+            // Limpiar el campo de resultados
             document.getElementById('resultados').value = '';
         }
     </script>
